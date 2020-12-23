@@ -2,6 +2,9 @@
 from typing import List, Tuple
 
 
+# TODO : solve this converting the string to Abstract Syntax Tree and then evaluating the tree at once.
+# Tree will consist of words or expressions
+# (let x 3 y (add x 2) y) -> expression(let, x, 3, y, expression(add, x, 2), y)
 class ListNode(object):
     def __init__(self, x: str):
         self.val = x
