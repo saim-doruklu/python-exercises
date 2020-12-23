@@ -30,12 +30,13 @@ class Solution:
 
     def evaluate_in_env(self, env_stack: List[dict], pointer: ListNode) -> Tuple[ListNode, int]:
         if self.is_number(pointer.val):
-            return self.evaluate_int_or_symbol(env_stack, pointer)
+            pointer, word = self.get_next_word(pointer)
+            return pointer, self.evaluate_int_or_symbol(env_stack, word)
 
         pointer = pointer.get_next()
         if self.is_number(pointer.val):
-            pointer, number = self.evaluate_int_or_symbol(env_stack, pointer)
-            return pointer.get_next(), number
+            pointer, word = self.get_next_word(pointer)
+            return pointer.get_next(), self.evaluate_int_or_symbol(env_stack, word)
 
         result = None
         this_env = dict()
@@ -49,9 +50,9 @@ class Solution:
 
             while pointer.val != ")":
                 pointer = pointer.get_next()
-
                 if self.is_number_or_word(pointer.get_val()):
-                    pointer, next_value = self.evaluate_int_or_symbol(env_stack,pointer)
+                    pointer, word = self.get_next_word(pointer)
+                    next_value = self.evaluate_int_or_symbol(env_stack, word)
                 else:
                     pointer, next_value = self.evaluate_in_env(env_stack, pointer)
 
@@ -66,17 +67,18 @@ class Solution:
             while not is_final_expression:
                 pointer = pointer.get_next()
                 if self.is_word(pointer.val):
-                    pointer_after_word, word = self.get_next_word(pointer)
-                    if pointer_after_word.val != ")":
-                        pointer = pointer_after_word.get_next()
+                    pointer, word = self.get_next_word(pointer)
+                    if pointer.val != ")":
+                        pointer = pointer.get_next()
                         if self.is_number_or_word(pointer.val):
-                            pointer, this_env[word] = self.evaluate_int_or_symbol(env_stack, pointer)
+                            pointer, to_eval = self.get_next_word(pointer)
+                            this_env[word] = self.evaluate_int_or_symbol(env_stack, to_eval)
                         else:
                             pointer, this_env[word] = self.evaluate_in_env(env_stack,pointer)
-                    else:
-                        pointer, result = self.evaluate_int_or_symbol(env_stack,pointer)
+                    else: # might be symbol or number, means this is final part of let
+                        result = self.find_in_env(env_stack,word)
                         is_final_expression = True
-                else:
+                else: # either number or () expression, means this is final part of let
                     pointer, result = self.evaluate_in_env(env_stack, pointer)
                     is_final_expression = True
         env_stack.pop()
@@ -92,13 +94,11 @@ class Solution:
     def is_number_or_word(self, character):
         return self.is_number(character) or self.is_word(character)
 
-    def evaluate_int_or_symbol(self, env_stack, pointer) -> Tuple[ListNode, int]:
-        first_char = pointer.val
-        pointer, word = self.get_next_word(pointer)
-        if self.is_number(first_char):
-            return pointer, int(word)
+    def evaluate_int_or_symbol(self, env_stack, word:str) -> int:
+        if self.is_number(word[0]):
+            return int(word)
         else:
-            return pointer, self.find_in_env(env_stack, word)
+            return self.find_in_env(env_stack, word)
 
     def find_in_env(self, env_stack:List[dict], word:str) -> int:
         for env in reversed(env_stack):
