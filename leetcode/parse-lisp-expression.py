@@ -1,132 +1,83 @@
-# from __future__ import annotations
-from typing import List, Tuple
+from __future__ import annotations
+import re
+# from typing import List, Tuple, Union
 
+class Expression:
 
-# TODO : solve this converting the string to Abstract Syntax Tree and then evaluating the tree at once.
-# Tree will consist of words or expressions
-# (let x 3 y (add x 2) y) -> expression(let, x, 3, y, expression(add, x, 2), y)
-class ListNode(object):
-    def __init__(self, x: str):
-        self.val = x
-        self.next = None
+    def __init__(self, parent):
+        self.parent = parent
+        self.expressions = []
+        self.env = {}
 
-    def get_next(self):
-        return self.next
+    def add_expression(self, expression):
+        self.expressions.append(expression)
 
-    def get_next_n(self, n_times):
-        result = self
-        for i in range(n_times):
-            result = result.next
-        return result
-
-    def set_next(self, next_node):
-        self.next = next_node
-
-    def get_val(self) -> str:
-        return self.val
+    def find_in_env(self, symbol):
+        current_env = self
+        while current_env.env.get(symbol) is None:
+            current_env = current_env.parent
+        return current_env.env.get(symbol)
 
 
 class Solution:
     def evaluate(self, expression: str) -> int:
-        expression_pointer, result = self.evaluate_in_env([], self.string_to_list_node(expression))
-        return result
+        tokens = re.findall(r"(\(|[-\w]+|\))", expression)
+        current_expression = Expression(None)
+        for token in tokens:
+            if token == "(":
+                sub_expression = Expression(current_expression)
+                current_expression.add_expression(sub_expression)
+                current_expression = sub_expression
+            elif token == ")":
+                current_expression = current_expression.parent
+            else:
+                current_expression.add_expression(token)
+        return self.evaluate_in_env(current_expression.expressions[0])
 
-    def evaluate_in_env(self, env_stack: List[dict], pointer: ListNode) -> Tuple[ListNode, int]:
-        if self.is_number(pointer.val):
-            pointer, word = self.get_next_word(pointer)
-            return pointer, self.evaluate_int_or_symbol(env_stack, word)
+    def evaluate_in_env(self, expression):
+        expression_type = expression.expressions[0]
 
-        pointer = pointer.get_next()
-        if self.is_number(pointer.val):
-            pointer, word = self.get_next_word(pointer)
-            return pointer.get_next(), self.evaluate_int_or_symbol(env_stack, word)
+        if expression_type == "add" or expression_type == "mult":
+            def function_add(x):
+                return x + cumulative_result
 
-        result = None
-        this_env = dict()
-        env_stack.append(this_env)
-        pointer, operation = self.get_next_word(pointer)
-        if operation == "add" or operation == "mult":
-            if operation == "add":
+            def function_mult(x):
+                return x * cumulative_result
+
+            if expression_type == "add":
                 cumulative_result = 0
+                current_function = function_add
             else:
                 cumulative_result = 1
+                current_function = function_mult
 
-            while pointer.val != ")":
-                pointer = pointer.get_next()
-                if self.is_number_or_word(pointer.get_val()):
-                    pointer, word = self.get_next_word(pointer)
-                    next_value = self.evaluate_int_or_symbol(env_stack, word)
-                else:
-                    pointer, next_value = self.evaluate_in_env(env_stack, pointer)
+            for sub_expression in expression.expressions[1:]:
+                evaluated_value = self.evaluate_value_or_expression(expression, sub_expression)
+                cumulative_result = current_function(evaluated_value)
 
-                if operation == "add":
-                    cumulative_result = cumulative_result + next_value
-                else:
-                    cumulative_result = cumulative_result * next_value
-
-            result = cumulative_result
+            return cumulative_result
         else:
-            is_final_expression = False
-            while not is_final_expression:
-                pointer = pointer.get_next()
-                if self.is_word(pointer.val):
-                    pointer, word = self.get_next_word(pointer)
-                    if pointer.val != ")":
-                        pointer = pointer.get_next()
-                        if self.is_number_or_word(pointer.val):
-                            pointer, to_eval = self.get_next_word(pointer)
-                            this_env[word] = self.evaluate_int_or_symbol(env_stack, to_eval)
-                        else:
-                            pointer, this_env[word] = self.evaluate_in_env(env_stack,pointer)
-                    else: # might be symbol or number, means this is final part of let
-                        result = self.find_in_env(env_stack,word)
-                        is_final_expression = True
-                else: # either number or () expression, means this is final part of let
-                    pointer, result = self.evaluate_in_env(env_stack, pointer)
-                    is_final_expression = True
-        env_stack.pop()
-        pointer = pointer.get_next()
-        return pointer, result
+            last_expr_index = expression.expressions.__len__()
+            for index in range(1, last_expr_index, 2):
+                if index == last_expr_index - 1:
+                    return self.evaluate_value_or_expression(expression, expression.expressions[index])
+                else:
+                    symbol = expression.expressions[index]
+                    value = self.evaluate_value_or_expression(expression, expression.expressions[index+1])
+                    expression.env[symbol] = value
 
-    def is_number(self, character):
-        return str.isdigit(character) or character == "-"
-
-    def is_word(self, character):
-        return str.isalpha(character)
-
-    def is_number_or_word(self, character):
-        return self.is_number(character) or self.is_word(character)
-
-    def evaluate_int_or_symbol(self, env_stack, word:str) -> int:
-        if self.is_number(word[0]):
-            return int(word)
+    def evaluate_value_or_expression(self, expression, sub_expression):
+        if type(sub_expression) == str:
+            if self.is_number(sub_expression):
+                evaluated_value = int(sub_expression)
+            else:
+                evaluated_value = int(expression.find_in_env(sub_expression))
         else:
-            return self.find_in_env(env_stack, word)
+            evaluated_value = self.evaluate_in_env(sub_expression)
+        return evaluated_value
 
-    def find_in_env(self, env_stack:List[dict], word:str) -> int:
-        for env in reversed(env_stack):
-            if env.get(word) is not None:
-                return env.get(word)
-
-    def get_next_word(self, pointer) -> Tuple[ListNode, str]:
-        word = []
-        while self.is_number_or_word(pointer.val):
-            word.append(pointer.val)
-            pointer = pointer.get_next()
-        word = "".join(word)
-        return pointer, word
-
-    def string_to_list_node(self, expression: str):
-        previous_node = None
-        first = None
-        for i in expression:
-            current_node = ListNode(i)
-            if first is None:
-                first = current_node
-            if previous_node is not None:
-                previous_node.set_next(current_node)
-            previous_node = current_node
-        return first
+    def is_number(self, string):
+        return re.match(r"-?\d+", string)
 
 
 if __name__ == '__main__':
