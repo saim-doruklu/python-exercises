@@ -32,7 +32,7 @@ class Solution:
                 current_expression.append(token)
         return self.evaluate_in_env(current_expression[0], [])
 
-    def evaluate_in_env(self, expression, env_stack, index=0, function_type=None, previous_result=None):
+    def evaluate_in_env(self, expression, env_stack, index=0, function_type=None, arg=None):
 
         if function_type is None:
             function_type = expression[0]
@@ -42,35 +42,32 @@ class Solution:
 
         sub_expression = expression[index]
         is_last_sub_expression = index == expression.__len__() - 1
-        if function_type == "let" and previous_result is None and not is_last_sub_expression:
+        if function_type == "let" and arg is None and not is_last_sub_expression:
             return self.evaluate_in_env(expression, env_stack, index + 1, function_type, sub_expression)
 
-        current_result = None
-        if function_type != "let" or previous_result is not None or is_last_sub_expression:
-            if type(sub_expression) == str:
-                if self.is_number(sub_expression):
-                    current_result = int(sub_expression)
-                else:
-                    current_result = self.find_in_env(env_stack, sub_expression)
+        if type(sub_expression) == str:
+            if self.is_number(sub_expression):
+                current_result = int(sub_expression)
             else:
-                current_result = self.evaluate_in_env(sub_expression, env_stack)
-
-        if function_type == "add":
-            next_result = previous_result + current_result
-        elif function_type == "mult":
-            next_result = previous_result * current_result
+                current_result = self.find_in_env(env_stack, sub_expression)
         else:
-            next_result = current_result
+            current_result = self.evaluate_in_env(sub_expression, env_stack)
 
         if is_last_sub_expression:
             env_stack.pop()
-            return next_result
+            return current_result
 
         if function_type == "let":
-            env_stack[-1][previous_result] = current_result
-            next_result = None
+            env_stack[-1][arg] = current_result
 
-        return self.evaluate_in_env(expression, env_stack, index + 1, function_type, next_result)
+        evaluate_remaining = self.evaluate_in_env(expression, env_stack, index + 1, function_type)
+
+        if function_type == "add":
+            return current_result + evaluate_remaining
+        elif function_type == "mult":
+            return current_result * evaluate_remaining
+        else:
+            return evaluate_remaining
 
     def find_in_env(self, env_stack: list, symbol):
         for index in range(0, env_stack.__len__()):
