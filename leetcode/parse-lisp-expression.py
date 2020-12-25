@@ -1,6 +1,18 @@
 import re
 
-function_defaults = {"add": 0, "mult": 1}
+
+def add(x, y):
+    return x + y
+
+
+def mult(x, y):
+    return x * y
+
+
+initial_args = {
+    "add": 0,
+    "mult": 1
+}
 
 
 class Solution:
@@ -20,44 +32,50 @@ class Solution:
                 current_expression.append(token)
         return self.evaluate_in_env(current_expression[0], [])
 
-    def evaluate_in_env(self, expression, env_stack):
+    def evaluate_in_env(self, expression, env_stack, index=0, function_type=None, previous_result=None):
 
-        if type(expression) == str:
-            if self.is_number(expression):
-                return expression
+        if function_type is None:
+            function_type = expression[0]
+            symbols = {}
+            env_stack.append(symbols)
+            return self.evaluate_in_env(expression, env_stack, 1, function_type)
+
+        sub_expression = expression[index]
+        current_result = None
+        if function_type != "let" or previous_result is not None or index == expression.__len__() - 1:
+            if type(sub_expression) == str:
+                if self.is_number(sub_expression):
+                    current_result = int(sub_expression)
+                else:
+                    current_result = self.find_in_env(env_stack, sub_expression)
             else:
-                return self.find_in_env(env_stack, expression)
+                current_result = self.evaluate_in_env(sub_expression, env_stack)
 
-        symbols = {}
-        env_stack.append(symbols)
-
-        function_type = expression[0]
-        if function_type == "add" or function_type == "mult":
-
-            def calculate(x, y):
-                if function_type == "add":
-                    return x + y
-                else:
-                    return x * y
-
-            cumulative_result = function_defaults[function_type]
-            for sub_expression in expression[1:]:
-                evaluated_value = self.evaluate_in_env(sub_expression, env_stack)
-                cumulative_result = calculate(int(evaluated_value), cumulative_result)
-
-            expression_evaluation_result = cumulative_result
+        if function_type == "let":
+            if current_result is not None:
+                next_result = None
+            else:
+                next_result = sub_expression
         else:
-            last_expr_index = expression.__len__() - 1
-            for index in range(1, last_expr_index + 1, 2):
-                if index == last_expr_index:
-                    expression_evaluation_result = self.evaluate_in_env(expression[index], env_stack)
-                else:
-                    new_symbol = expression[index]
-                    value = self.evaluate_in_env(expression[index + 1], env_stack)
-                    symbols[new_symbol] = value
+            if previous_result is None:
+                previous_result = initial_args[function_type]
 
-        env_stack.pop()
-        return expression_evaluation_result
+            if function_type == "add":
+                next_result = previous_result + current_result
+            else:
+                next_result = previous_result * current_result
+
+        if index == expression.__len__() - 1:
+            env_stack.pop()
+            if function_type == "let":
+                return current_result
+            else:
+                return next_result
+
+        if function_type == "let" and current_result is not None:
+            env_stack[-1][previous_result] = current_result
+
+        return self.evaluate_in_env(expression, env_stack, index + 1, function_type, next_result)
 
     def find_in_env(self, env_stack: list, symbol):
         for index in range(0, env_stack.__len__()):
