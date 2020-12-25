@@ -1,5 +1,7 @@
 import re
 
+function_defaults = {"add": 0, "mult": 1}
+
 
 class Solution:
     def evaluate(self, expression: str) -> int:
@@ -22,25 +24,26 @@ class Solution:
 
         if type(expression) == str:
             if self.is_number(expression):
-                return int(expression)
+                return expression
             else:
-                return int(self.find_in_env(env_stack, expression))
+                return self.find_in_env(env_stack, expression)
 
         symbols = {}
         env_stack.append(symbols)
 
         function_type = expression[0]
         if function_type == "add" or function_type == "mult":
+
             def calculate(x, y):
                 if function_type == "add":
-                    return x + (y or 0)
+                    return x + y
                 else:
-                    return x * (y or 1)
+                    return x * y
 
-            cumulative_result = None
+            cumulative_result = function_defaults[function_type]
             for sub_expression in expression[1:]:
                 evaluated_value = self.evaluate_in_env(sub_expression, env_stack)
-                cumulative_result = calculate(evaluated_value, cumulative_result)
+                cumulative_result = calculate(int(evaluated_value), cumulative_result)
 
             expression_evaluation_result = cumulative_result
         else:
@@ -79,3 +82,6 @@ if __name__ == '__main__':
     print(sol.evaluate("(let a1 3 b2 (add a1 1) b2)"), 4)
     print(sol.evaluate("(let x 7 -12)"), -12)
     print(sol.evaluate("(let x -2 y x y)"), -2)
+    print(sol.evaluate(
+        "(let var0 -2 var1 -1 var2 -1 var3 -3 var4 4 var5 -3 var6 3 var7 4 var8 -3 var9 0 var10 1 var11 2 var12 -3 var13 3 var14 -5 var15 -5 var16 3 var17 -3 var18 0 var19 3 var20 -5 var21 -2 var22 -3 var23 -2 var24 -2 var25 -3 var26 -4 var27 4 var28 -4 var29 1 (mult (let var0 2 var3 4 var6 1 var9 1 var12 1 var15 -1 var18 -1 var21 -1 var24 0 var27 2 (add (mult var12 (add (mult var4 var7) (mult var24 -1))) (mult -21 (let var0 -4 var6 0 var12 -2 var18 4 var24 1 (mult (add (mult var18 var22) (add (add (mult 1 1) -6) -3)) (add (mult (mult -22 (mult 1 1)) (add -21 var26)) (mult -22 (add (mult 1 1) var28)))))))) (add var28 (add (add (add var3 -22) (mult (mult -7 (mult (mult -8 (let var0 0 var10 3 var20 3 (mult 1 1))) -6)) var15)) (mult (mult (mult var4 (add (add (add (mult 1 1) -7) (add var7 var22)) var2)) (let var0 1 var7 -5 var14 -5 var21 -3 var28 -2 (let var0 0 var8 -5 var16 0 var24 2 (add -30 var15)))) var18)))))"),
+        427173136)
