@@ -2,33 +2,22 @@ from __future__ import annotations
 import re
 
 
-# from typing import List, Tuple, Union
-
-class Expression:
-
-    def __init__(self):
-        self.sub_expressions = []
-
-    def add_expression(self, expression):
-        self.sub_expressions.append(expression)
-
-
 class Solution:
     def evaluate(self, expression: str) -> int:
         tokens = re.findall(r"(\(|[-\w]+|\))", expression)
         expression_depth = []
-        current_expression = Expression()
+        current_expression = []
         for token in tokens:
             if token == "(":
-                sub_expression = Expression()
-                current_expression.add_expression(sub_expression)
+                sub_expression = []
+                current_expression.append(sub_expression)
                 expression_depth.append(current_expression)
                 current_expression = sub_expression
             elif token == ")":
                 current_expression = expression_depth.pop()
             else:
-                current_expression.add_expression(token)
-        return self.evaluate_in_env(current_expression.sub_expressions[0], [])
+                current_expression.append(token)
+        return self.evaluate_in_env(current_expression[0], [])
 
     def evaluate_in_env(self, expression, parent_env):
         if type(expression) == str:
@@ -45,7 +34,7 @@ class Solution:
             else:
                 return parent_env(symbol)
 
-        function_type = expression.sub_expressions[0]
+        function_type = expression[0]
         if function_type == "add" or function_type == "mult":
             def calculate(x, y):
                 if function_type == "add":
@@ -54,19 +43,19 @@ class Solution:
                     return x * (y or 1)
 
             cumulative_result = None
-            for sub_expression in expression.sub_expressions[1:]:
+            for sub_expression in expression[1:]:
                 evaluated_value = self.evaluate_in_env(sub_expression, current_env)
                 cumulative_result = calculate(evaluated_value, cumulative_result)
 
             return cumulative_result
         else:
-            last_expr_index = expression.sub_expressions.__len__() - 1
+            last_expr_index = expression.__len__() - 1
             for index in range(1, last_expr_index + 1, 2):
                 if index == last_expr_index:
-                    return self.evaluate_in_env(expression.sub_expressions[index], current_env)
+                    return self.evaluate_in_env(expression[index], current_env)
                 else:
-                    new_symbol = expression.sub_expressions[index]
-                    value = self.evaluate_in_env(expression.sub_expressions[index + 1], current_env)
+                    new_symbol = expression[index]
+                    value = self.evaluate_in_env(expression[index + 1], current_env)
                     symbols[new_symbol] = value
 
     def is_number(self, string):
