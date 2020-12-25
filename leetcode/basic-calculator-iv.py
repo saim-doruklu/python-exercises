@@ -103,8 +103,25 @@ class Solution:
         return result
 
     def multiply_single(self, key_one_list: list, value_one, key_two_list: list, value_two):
-        new_key = key_one_list + key_two_list
-        new_key.sort()
+        new_key = []
+        index_one = 0
+        index_two = 0
+        while index_one < key_one_list.__len__() and index_two < key_two_list.__len__():
+            if key_one_list[index_one] < key_two_list[index_two]:
+                new_key.append(key_one_list[index_one])
+                index_one += 1
+            else:
+                new_key.append(key_two_list[index_two])
+                index_two += 1
+
+        while index_one < key_one_list.__len__():
+            new_key.append(key_one_list[index_one])
+            index_one += 1
+
+        while index_two < key_two_list.__len__():
+            new_key.append(key_two_list[index_two])
+            index_two += 1
+
         return {str(new_key): [new_key, value_one * value_two]}
 
 
