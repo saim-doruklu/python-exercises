@@ -7,10 +7,10 @@ import re
 class Expression:
 
     def __init__(self):
-        self.expressions = []
+        self.sub_expressions = []
 
     def add_expression(self, expression):
-        self.expressions.append(expression)
+        self.sub_expressions.append(expression)
 
 
 class Solution:
@@ -28,7 +28,7 @@ class Solution:
                 current_expression = expression_depth.pop()
             else:
                 current_expression.add_expression(token)
-        return self.evaluate_in_env(current_expression.expressions[0], [])
+        return self.evaluate_in_env(current_expression.sub_expressions[0], [])
 
     def evaluate_in_env(self, expression, parent_env):
         if type(expression) == str:
@@ -45,28 +45,28 @@ class Solution:
             else:
                 return parent_env(symbol)
 
-        expression_type = expression.expressions[0]
-        if expression_type == "add" or expression_type == "mult":
-            def calculate(fun_type, x, y):
-                if fun_type == "add":
+        function_type = expression.sub_expressions[0]
+        if function_type == "add" or function_type == "mult":
+            def calculate(x, y):
+                if function_type == "add":
                     return x + (y or 0)
                 else:
                     return x * (y or 1)
 
             cumulative_result = None
-            for sub_expression in expression.expressions[1:]:
+            for sub_expression in expression.sub_expressions[1:]:
                 evaluated_value = self.evaluate_in_env(sub_expression, current_env)
-                cumulative_result = calculate(expression_type, evaluated_value, cumulative_result)
+                cumulative_result = calculate(evaluated_value, cumulative_result)
 
             return cumulative_result
         else:
-            last_expr_index = expression.expressions.__len__() - 1
+            last_expr_index = expression.sub_expressions.__len__() - 1
             for index in range(1, last_expr_index + 1, 2):
                 if index == last_expr_index:
-                    return self.evaluate_in_env(expression.expressions[index], current_env)
+                    return self.evaluate_in_env(expression.sub_expressions[index], current_env)
                 else:
-                    new_symbol = expression.expressions[index]
-                    value = self.evaluate_in_env(expression.expressions[index + 1], current_env)
+                    new_symbol = expression.sub_expressions[index]
+                    value = self.evaluate_in_env(expression.sub_expressions[index + 1], current_env)
                     symbols[new_symbol] = value
 
     def is_number(self, string):
