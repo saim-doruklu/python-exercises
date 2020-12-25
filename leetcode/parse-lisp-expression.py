@@ -6,23 +6,21 @@ import re
 
 class Expression:
 
-    def __init__(self, parent_env):
+    def __init__(self):
         self.expressions = []
-        self.env = {"0_parent_env":parent_env}
 
     def add_expression(self, expression):
         self.expressions.append(expression)
-
 
 
 class Solution:
     def evaluate(self, expression: str) -> int:
         tokens = re.findall(r"(\(|[-\w]+|\))", expression)
         expression_depth = []
-        current_expression = Expression(None)
+        current_expression = Expression()
         for token in tokens:
             if token == "(":
-                sub_expression = Expression(current_expression.env)
+                sub_expression = Expression()
                 current_expression.add_expression(sub_expression)
                 expression_depth.append(current_expression)
                 current_expression = sub_expression
@@ -30,14 +28,22 @@ class Solution:
                 current_expression = expression_depth.pop()
             else:
                 current_expression.add_expression(token)
-        return self.evaluate_in_env(current_expression.expressions[0])
+        return self.evaluate_in_env(current_expression.expressions[0], [])
 
-    def evaluate_in_env(self, expression, parent_env=None):
+    def evaluate_in_env(self, expression, parent_env):
         if type(expression) == str:
             if self.is_number(expression):
                 return int(expression)
             else:
-                return int(self.find_in_env(expression, parent_env))
+                return int(parent_env(expression))
+
+        symbols = {}
+
+        def current_env(symbol):
+            if symbols.get(symbol) is not None:
+                return symbols.get(symbol)
+            else:
+                return parent_env(symbol)
 
         expression_type = expression.expressions[0]
         if expression_type == "add" or expression_type == "mult":
@@ -49,27 +55,22 @@ class Solution:
 
             cumulative_result = None
             for sub_expression in expression.expressions[1:]:
-                evaluated_value = self.evaluate_in_env(sub_expression, expression.env)
+                evaluated_value = self.evaluate_in_env(sub_expression, current_env)
                 cumulative_result = calculate(expression_type, evaluated_value, cumulative_result)
 
             return cumulative_result
         else:
             last_expr_index = expression.expressions.__len__() - 1
-            for index in range(1, last_expr_index+1, 2):
+            for index in range(1, last_expr_index + 1, 2):
                 if index == last_expr_index:
-                    return self.evaluate_in_env(expression.expressions[index], expression.env)
+                    return self.evaluate_in_env(expression.expressions[index], current_env)
                 else:
-                    symbol = expression.expressions[index]
-                    value = self.evaluate_in_env(expression.expressions[index + 1], expression.env)
-                    expression.env[symbol] = value
+                    new_symbol = expression.expressions[index]
+                    value = self.evaluate_in_env(expression.expressions[index + 1], current_env)
+                    symbols[new_symbol] = value
 
     def is_number(self, string):
         return re.match(r"-?\d+", string)
-
-    def find_in_env(self, symbol, current_env):
-        while current_env.get(symbol) is None:
-            current_env = current_env["0_parent_env"]
-        return current_env.get(symbol)
 
 
 if __name__ == '__main__':
