@@ -52,7 +52,10 @@ class Solution:
         while index < expression_list.__len__():
             raw_expression = expression_list[index]
             if type(raw_expression) == int or (type(raw_expression) == str and str.isnumeric(raw_expression)):
-                evaluated_expression = {"[]": [[], int(raw_expression)]}
+                if int(raw_expression) != 0:
+                    evaluated_expression = {"[]": [[], int(raw_expression)]}
+                else:
+                    evaluated_expression = {}
             elif type(raw_expression) == str:
                 evaluated_expression = {str([raw_expression]): [[raw_expression], 1]}
             else:
@@ -84,8 +87,7 @@ class Solution:
                 result = expr_one_multiplier - expr_two_multiplier
 
             if result == 0:
-                if expr_one.get(key) is not None:
-                    expr_one.pop(key)
+                expr_one.pop(key)
             else:
                 expr_one[key] = [key_as_list[0], result]
         return expr_one
