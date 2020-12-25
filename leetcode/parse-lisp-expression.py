@@ -1,4 +1,3 @@
-from __future__ import annotations
 import re
 
 
@@ -19,20 +18,16 @@ class Solution:
                 current_expression.append(token)
         return self.evaluate_in_env(current_expression[0], [])
 
-    def evaluate_in_env(self, expression, parent_env):
+    def evaluate_in_env(self, expression, env_stack):
+
         if type(expression) == str:
             if self.is_number(expression):
                 return int(expression)
             else:
-                return int(parent_env(expression))
+                return int(self.find_in_env(env_stack, expression))
 
         symbols = {}
-
-        def current_env(symbol):
-            if symbols.get(symbol) is not None:
-                return symbols.get(symbol)
-            else:
-                return parent_env(symbol)
+        env_stack.append(symbols)
 
         function_type = expression[0]
         if function_type == "add" or function_type == "mult":
@@ -44,19 +39,28 @@ class Solution:
 
             cumulative_result = None
             for sub_expression in expression[1:]:
-                evaluated_value = self.evaluate_in_env(sub_expression, current_env)
+                evaluated_value = self.evaluate_in_env(sub_expression, env_stack)
                 cumulative_result = calculate(evaluated_value, cumulative_result)
 
-            return cumulative_result
+            expression_evaluation_result = cumulative_result
         else:
             last_expr_index = expression.__len__() - 1
             for index in range(1, last_expr_index + 1, 2):
                 if index == last_expr_index:
-                    return self.evaluate_in_env(expression[index], current_env)
+                    expression_evaluation_result = self.evaluate_in_env(expression[index], env_stack)
                 else:
                     new_symbol = expression[index]
-                    value = self.evaluate_in_env(expression[index + 1], current_env)
+                    value = self.evaluate_in_env(expression[index + 1], env_stack)
                     symbols[new_symbol] = value
+
+        env_stack.pop()
+        return expression_evaluation_result
+
+    def find_in_env(self, env_stack: list, symbol):
+        for index in range(0, env_stack.__len__()):
+            current_env = env_stack[-index - 1]
+            if current_env.get(symbol) is not None:
+                return current_env.get(symbol)
 
     def is_number(self, string):
         return re.match(r"-?\d+", string)
