@@ -11,7 +11,7 @@ def mult(x, y):
 
 initial_args = {
     "add": 0,
-    "mult": 1
+    "mult": 1,
 }
 
 
@@ -38,11 +38,15 @@ class Solution:
             function_type = expression[0]
             symbols = {}
             env_stack.append(symbols)
-            return self.evaluate_in_env(expression, env_stack, 1, function_type)
+            return self.evaluate_in_env(expression, env_stack, 1, function_type, initial_args.get(function_type))
 
         sub_expression = expression[index]
+        is_last_sub_expression = index == expression.__len__() - 1
+        if function_type == "let" and previous_result is None and not is_last_sub_expression:
+            return self.evaluate_in_env(expression, env_stack, index + 1, function_type, sub_expression)
+
         current_result = None
-        if function_type != "let" or previous_result is not None or index == expression.__len__() - 1:
+        if function_type != "let" or previous_result is not None or is_last_sub_expression:
             if type(sub_expression) == str:
                 if self.is_number(sub_expression):
                     current_result = int(sub_expression)
@@ -51,29 +55,20 @@ class Solution:
             else:
                 current_result = self.evaluate_in_env(sub_expression, env_stack)
 
-        if function_type == "let":
-            if current_result is not None:
-                next_result = None
-            else:
-                next_result = sub_expression
+        if function_type == "add":
+            next_result = previous_result + current_result
+        elif function_type == "mult":
+            next_result = previous_result * current_result
         else:
-            if previous_result is None:
-                previous_result = initial_args[function_type]
+            next_result = current_result
 
-            if function_type == "add":
-                next_result = previous_result + current_result
-            else:
-                next_result = previous_result * current_result
-
-        if index == expression.__len__() - 1:
+        if is_last_sub_expression:
             env_stack.pop()
-            if function_type == "let":
-                return current_result
-            else:
-                return next_result
+            return next_result
 
-        if function_type == "let" and current_result is not None:
+        if function_type == "let":
             env_stack[-1][previous_result] = current_result
+            next_result = None
 
         return self.evaluate_in_env(expression, env_stack, index + 1, function_type, next_result)
 
@@ -89,9 +84,9 @@ class Solution:
 
 if __name__ == '__main__':
     sol = Solution()
-    print(sol.evaluate("(add 1 2)"), 3)
-    print(sol.evaluate("(add (add 3 4) 2)"), 9)
-    print(sol.evaluate("(mult 3 (add 2 3))"), 15)
+    # print(sol.evaluate("(add 1 2)"), 3)
+    # print(sol.evaluate("(add (add 3 4) 2)"), 9)
+    # print(sol.evaluate("(mult 3 (add 2 3))"), 15)
     print(sol.evaluate("(let x 2 (mult x 5))"), 10)
     print(sol.evaluate("(let x 2 (mult x (let x 3 y 4 (add x y))))"), 14)
     print(sol.evaluate("(let x 3 x 2 x)"), 2)
