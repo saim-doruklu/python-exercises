@@ -40,7 +40,7 @@ class Rational:
             self.denom = self.calculate_num_from_factors(self.denominator_factors)
 
     def __eq__(self, other):
-        return self.numer == other.numer and self.denom == other.denom
+        return self.sign == other.sign and self.numer == other.numer and self.denom == other.denom
 
     def __repr__(self):
         return '{}/{}'.format(self.numer, self.denom)
@@ -80,10 +80,11 @@ class Rational:
                                                      num_factors_two, sign)
 
     def __truediv__(self, other):
-        if self.numer == 0:
-            return Rational(0, 1)
         if other.numer == 0:
             raise ArithmeticError("Division by zero")
+
+        if self.numer == 0:
+            return Rational(0, 1)
 
         num_factors_one = self.numerator_factors.copy()
         denom_factors_one = self.denominator_factors.copy()
