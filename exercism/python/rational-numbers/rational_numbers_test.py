@@ -42,6 +42,18 @@ class RationalNumbersTest(unittest.TestCase):
     def test_add_a_rational_number_to_its_additive_inverse(self):
         self.assertEqual(Rational(1, 2) + Rational(-1, 2), Rational(0, 1))
 
+    def test_add_1(self):
+        self.assertEqual(Rational(1, 3) + Rational(1, 5), Rational(8, 15))
+
+    def test_add_2(self):
+        self.assertEqual(Rational(1, 3) + Rational(1, -5), Rational(2, 15))
+
+    def test_add_3(self):
+        self.assertEqual(Rational(1, -3) + Rational(1, 5), Rational(2, -15))
+
+    def test_add_4(self):
+        self.assertEqual(Rational(1, -3) + Rational(-1, 5), Rational(8, -15))
+
     # Subtraction
 
     def test_subtract_two_positive_rational_numbers(self):

@@ -11,7 +11,7 @@ class Rational:
         if denom == 0:
             raise ArithmeticError("Division by zero")
 
-        self.sign = -1 if (numer < 0 < denom) or (numer > 0 > denom) else 1
+        self.sign = 1 if numer * denom >= 0 else -1
         if numer == 0:
             self.numer = 0
             self.denom = 1
@@ -213,10 +213,9 @@ class Rational:
 
     def multiply_with_calculated_factors(self, denom_factors_one, denom_factors_two, num_factors_one, num_factors_two,
                                          sign):
-        self.eliminate_common_divisors(num_factors_one, denom_factors_two)
-        self.eliminate_common_divisors(num_factors_two, denom_factors_one)
         multiplied_numer_factors = self.multiply_factors(num_factors_one, num_factors_two)
         multiplied_denom_factors = self.multiply_factors(denom_factors_one, denom_factors_two)
+        self.eliminate_common_divisors(multiplied_numer_factors, multiplied_denom_factors)
         numer = self.calculate_num_from_factors(multiplied_numer_factors)
         denom = self.calculate_num_from_factors(multiplied_denom_factors)
         numer *= sign
