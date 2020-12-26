@@ -117,7 +117,9 @@ class Rational:
             self.to_the_power(denom_factors, power)
             numer **= power
             denom **= power
-            numer *= self.sign
+
+            if power % 2 == 1:
+                numer *= self.sign
 
             return Rational(numer, denom, numer_factors, denom_factors)
         else:
