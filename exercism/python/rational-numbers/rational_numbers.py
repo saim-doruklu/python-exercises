@@ -8,6 +8,9 @@ class Rational:
     max_number_checked_for_prime = 2
 
     def __init__(self, numer, denom, numer_factors=None, denom_factors=None):
+        if denom == 0:
+            raise ArithmeticError("Division by zero")
+
         self.sign = -1 if (numer < 0 < denom) or (numer > 0 > denom) else 1
         if numer == 0:
             self.numer = 0
@@ -102,13 +105,49 @@ class Rational:
                                                      reverse_num_factors_two, sign)
 
     def __abs__(self):
-        pass
+        return Rational(self.numer, self.denom, self.numerator_factors.copy(), self.denominator_factors.copy())
 
     def __pow__(self, power):
-        pass
+        if power <= 0 and self.numer == 0:
+            raise ArithmeticError("Division by zero")
+
+        if type(power) == int:
+            if power == 0:
+                return Rational(1,1)
+
+            if power > 0:
+                numer = self.numer
+                denom = self.denom
+                numer_factors = self.numerator_factors.copy()
+                denom_factors = self.denominator_factors.copy()
+            else:
+                numer = self.denom
+                denom = self.numer
+                numer_factors = self.denominator_factors.copy()
+                denom_factors = self.numerator_factors.copy()
+
+            if power < 0:
+                power *= -1
+
+            self.to_the_power(numer_factors, power)
+            self.to_the_power(denom_factors, power)
+            numer **= power
+            denom **= power
+            numer *= self.sign
+
+            return Rational(numer, denom, numer_factors, denom_factors)
+        else:
+            return self.sign * (self.numer ** power) / (self.denom ** power)
 
     def __rpow__(self, base):
-        pass
+        if base == 0 and self.numer <= 0:
+            raise ArithmeticError("Zero to power zero")
+
+        if self.sign < 0:
+            base = 1 / base
+
+        return math.pow(base, self.numer/self.denom)
+
 
     def eliminate_common_divisors(self, factors_one, factors_two):
         common_primes = []
@@ -200,7 +239,6 @@ class Rational:
             num_factors_one[factor] = power_of_factor_in_num_one + power_of_factor_in_num_two
         return num_factors_one
 
-
     def multiply_with_calculated_factors(self, denom_factors_one, denom_factors_two, num_factors_one, num_factors_two,
                                          sign):
         self.eliminate_common_divisors(num_factors_one, denom_factors_two)
@@ -211,3 +249,7 @@ class Rational:
         denom = self.calculate_num_from_factors(multiplied_denom_factors)
         numer *= sign
         return Rational(numer, denom, multiplied_numer_factors, multiplied_denom_factors)
+
+    def to_the_power(self, factors, power):
+        for factor in factors:
+            factors[factor] *= power
