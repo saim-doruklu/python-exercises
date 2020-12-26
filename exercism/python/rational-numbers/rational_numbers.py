@@ -135,6 +135,9 @@ class Rational:
         if base == 0 and (self.sign * self.numer) <= 0:
             raise ArithmeticError("Zero to power zero")
 
+        if base == 0:
+            return 0
+
         if self.sign < 0:
             base = 1 / base
 
