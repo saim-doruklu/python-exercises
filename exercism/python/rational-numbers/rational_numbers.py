@@ -132,7 +132,7 @@ class Rational:
             return ((self.sign * self.numer) ** power) / (self.denom ** power)
 
     def __rpow__(self, base):
-        if base == 0 and self.numer <= 0:
+        if base == 0 and (self.sign * self.numer) <= 0:
             raise ArithmeticError("Zero to power zero")
 
         if self.sign < 0:
