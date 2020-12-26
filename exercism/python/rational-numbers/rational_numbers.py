@@ -47,19 +47,25 @@ class Rational:
 
     def __add__(self, other):
         if self.numer == 0:
-            return Rational(other.sign * other.numer, other.denom, other.numerator_factors.copy(), other.denominator_factors.copy())
+            return Rational(other.sign * other.numer, other.denom, other.numerator_factors.copy(),
+                            other.denominator_factors.copy())
         if other.numer == 0:
-            return Rational(self.sign * self.numer, self.denom, self.numerator_factors.copy(), self.denominator_factors.copy())
+            return Rational(self.sign * self.numer, self.denom, self.numerator_factors.copy(),
+                            self.denominator_factors.copy())
 
-        return Rational(self.numer * other.denom * self.sign + other.numer * self.denom * other.sign, self.denom * other.denom)
+        return Rational(self.numer * other.denom * self.sign + other.numer * self.denom * other.sign,
+                        self.denom * other.denom)
 
     def __sub__(self, other):
         if self.numer == 0:
-            return Rational(other.sign * -1 * other.numer, other.denom, other.numerator_factors.copy(), other.denominator_factors.copy())
+            return Rational(other.sign * -1 * other.numer, other.denom, other.numerator_factors.copy(),
+                            other.denominator_factors.copy())
         if other.numer == 0:
-            return Rational(self.sign * self.numer, self.denom, self.numerator_factors.copy(), self.denominator_factors.copy())
+            return Rational(self.sign * self.numer, self.denom, self.numerator_factors.copy(),
+                            self.denominator_factors.copy())
 
-        return Rational(self.numer * other.denom * self.sign - other.numer * self.denom * other.sign, self.denom * other.denom)
+        return Rational(self.numer * other.denom * self.sign - other.numer * self.denom * other.sign,
+                        self.denom * other.denom)
 
     def __mul__(self, other):
         if self.numer == 0 or other.numer == 0:
@@ -97,7 +103,7 @@ class Rational:
 
         if type(power) == int:
             if power == 0:
-                return Rational(1,1)
+                return Rational(1, 1)
 
             if power > 0:
                 numer = self.numer
@@ -123,7 +129,7 @@ class Rational:
 
             return Rational(numer, denom, numer_factors, denom_factors)
         else:
-            return self.sign * (self.numer ** power) / (self.denom ** power)
+            return ((self.sign * self.numer) ** power) / (self.denom ** power)
 
     def __rpow__(self, base):
         if base == 0 and self.numer <= 0:
@@ -132,8 +138,7 @@ class Rational:
         if self.sign < 0:
             base = 1 / base
 
-        return math.pow(base, self.numer/self.denom)
-
+        return math.pow(base, self.numer / self.denom)
 
     def eliminate_common_divisors(self, factors_one, factors_two):
         common_primes = []
