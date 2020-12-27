@@ -16,3 +16,7 @@ C:\Exercism\exercism.exe submit  armstrong-numbers/armstrong_numbers.py
 C:\Exercism\exercism.exe download --exercise=perfect-numbers --track=python
 C:\Exercism\exercism.exe submit  perfect-numbers/perfect_numbers.py
 C:\Exercism\exercism.exe download --exercise=high-scores --track=python
+C:\Exercism\exercism.exe submit  high-scores/high_scores.py
+C:\Exercism\exercism.exe download --exercise=matrix --track=python
+C:\Exercism\exercism.exe submit  matrix/matrix.py
+C:\Exercism\exercism.exe download --exercise=hamming --track=python
