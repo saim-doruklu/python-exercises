@@ -7,3 +7,10 @@ C:\Exercism\exercism.exe download --exercise=raindrops --track=python
 C:\Exercism\exercism.exe download --exercise=pangram --track=python
 C:\Exercism\exercism.exe download --exercise=rational-numbers --track=python
 C:\Exercism\exercism.exe submit  rational-numbers/rational_numbers.py
+C:\Exercism\exercism.exe submit  pangram/pangram.py
+C:\Exercism\exercism.exe download --exercise=robot-name --track=python
+C:\Exercism\exercism.exe download --exercise=protein-translation --track=python
+C:\Exercism\exercism.exe submit  protein-translation/protein_translation.py
+C:\Exercism\exercism.exe download --exercise=armstrong-numbers --track=python
+C:\Exercism\exercism.exe submit  armstrong-numbers/armstrong_numbers.py
+C:\Exercism\exercism.exe download --exercise=perfect-numbers --track=python
