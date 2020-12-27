@@ -14,3 +14,5 @@ C:\Exercism\exercism.exe submit  protein-translation/protein_translation.py
 C:\Exercism\exercism.exe download --exercise=armstrong-numbers --track=python
 C:\Exercism\exercism.exe submit  armstrong-numbers/armstrong_numbers.py
 C:\Exercism\exercism.exe download --exercise=perfect-numbers --track=python
+C:\Exercism\exercism.exe submit  perfect-numbers/perfect_numbers.py
+C:\Exercism\exercism.exe download --exercise=high-scores --track=python
