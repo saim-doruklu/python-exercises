@@ -7,8 +7,12 @@ class Matrix:
         for index, line in enumerate(lines):
             line_as_int_array = list(map(int, line.split()))
             self.rows.append(line_as_int_array)
+
+        #     either
         for i in range(self.rows[0].__len__()):
             self.cols.append(list(map(lambda row: row[i], self.rows)))
+        #     or
+        self.cols = list(map(lambda *args: [*args], *self.rows))
 
     def row(self, index):
         return self.rows[index - 1]

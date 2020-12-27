@@ -20,3 +20,4 @@ C:\Exercism\exercism.exe submit  high-scores/high_scores.py
 C:\Exercism\exercism.exe download --exercise=matrix --track=python
 C:\Exercism\exercism.exe submit  matrix/matrix.py
 C:\Exercism\exercism.exe download --exercise=hamming --track=python
+C:\Exercism\exercism.exe submit  hamming/hamming.py
