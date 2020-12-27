@@ -30,10 +30,7 @@ day_number = [
 
 
 def recite(start_verse, end_verse):
-    recites = []
-    for index in range(start_verse - 1, end_verse):
-        recites.append(get_recite_of_day(index))
-    return recites
+    return [get_recite_of_day(day) for day in range(start_verse - 1, end_verse)]
 
 
 def get_recite_of_day(day):
