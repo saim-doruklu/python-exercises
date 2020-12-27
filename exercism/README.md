@@ -22,3 +22,5 @@ C:\Exercism\exercism.exe submit  matrix/matrix.py
 C:\Exercism\exercism.exe download --exercise=hamming --track=python
 C:\Exercism\exercism.exe submit  hamming/hamming.py
 C:\Exercism\exercism.exe download --exercise=isogram --track=python
+C:\Exercism\exercism.exe submit  isogram/isogram.py
+C:\Exercism\exercism.exe download --exercise=twelve-days --track=python
