@@ -1,8 +1,10 @@
 import re
 
 
+def num_different_letters_in_str(some_str):
+    return set(re.findall("[a-z]", some_str)).__len__()
+
+
 def is_pangram(sentence):
-    sentence = re.sub("\s", "", sentence)
-    if not re.fullmatch("[a-z]+", sentence):
-        return False
-    return ''.join(set(sentence)).__len__() == 26
+    return num_different_letters_in_str("The quick brown fox jumps over the lazy dog") == num_different_letters_in_str(
+        sentence)
