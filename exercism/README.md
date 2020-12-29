@@ -28,3 +28,6 @@ C:\Exercism\exercism.exe submit  twelve-days/twelve_days.py
 C:\Exercism\exercism.exe download --exercise=word-count --track=python
 C:\Exercism\exercism.exe submit  word-count/word_count.py
 C:\Exercism\exercism.exe download --exercise=scrabble-score --track=python
+C:\Exercism\exercism.exe submit  scrabble-score/scrabble_score.py
+C:\Exercism\exercism.exe download --exercise=acronym --track=python
+C:\Exercism\exercism.exe submit  acronym/acronym.py
