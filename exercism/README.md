@@ -32,3 +32,5 @@ C:\Exercism\exercism.exe submit  scrabble-score/scrabble_score.py
 C:\Exercism\exercism.exe download --exercise=acronym --track=python
 C:\Exercism\exercism.exe submit  acronym/acronym.py
 C:\Exercism\exercism.exe download --exercise=kindergarten-garden --track=python
+C:\Exercism\exercism.exe submit  kindergarten-garden/kindergarten_garden.py
+C:\Exercism\exercism.exe download --exercise=grade-school --track=python
