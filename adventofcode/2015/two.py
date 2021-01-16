@@ -2,6 +2,7 @@ import numpy as np
 
 
 class DayTwo:
+    # total side area of cubes
     def part_one(self, gifts):
         sum = 0
         for gift in gifts:
@@ -15,6 +16,7 @@ class DayTwo:
             sum += int(this_result)
         return sum
 
+    # sum([max side circumference + volume for cube in cubes])
     def part_two(self, gifts):
         sum = 0
         for gift in gifts:

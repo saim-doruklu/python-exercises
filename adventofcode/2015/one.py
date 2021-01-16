@@ -1,7 +1,9 @@
 class DayOne:
+    # count parentheses: "("=+1, ")"=-1
     def part_one(self, instructions):
         return instructions.count("(") - instructions.count(")")
 
+    # where is result first equals to -1?  "("=+1, ")"=-1
     def part_two(self, instructions):
         return len(list(self.convert_to_floor(instructions)))
 
