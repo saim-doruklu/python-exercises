@@ -18,7 +18,7 @@ class DayOne:
 
 
 if __name__ == '__main__':
-    with open('one.txt', 'r') as file:
+    with open('inputs/one.txt', 'r') as file:
         all_lines = file.readlines()
         line_zero = all_lines[0]
         day_one = DayOne()

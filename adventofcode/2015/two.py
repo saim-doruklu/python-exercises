@@ -35,7 +35,7 @@ class DayTwo:
 
 
 if __name__ == '__main__':
-    with open('two.txt', 'r') as file:
+    with open('inputs/two.txt', 'r') as file:
         all_lines = file.readlines()
         day_two = DayTwo()
         print(day_two.part_one(all_lines))

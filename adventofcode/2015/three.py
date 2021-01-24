@@ -44,7 +44,7 @@ if __name__ == '__main__':
     # print(day_three.part_two("^>v<"), 3)
     # print(day_three.part_two("^v"), 3)
     # print(day_three.part_two("^v^v^v^v^v"), 11)
-    with open('three.txt', 'r') as file:
+    with open('inputs/three.txt', 'r') as file:
         all_lines = file.readlines()
         print(day_three.part_one(all_lines[0]))
         print(day_three.part_two(all_lines[0]))
