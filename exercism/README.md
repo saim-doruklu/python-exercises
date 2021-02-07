@@ -34,3 +34,13 @@ C:\Exercism\exercism.exe submit  acronym/acronym.py
 C:\Exercism\exercism.exe download --exercise=kindergarten-garden --track=python
 C:\Exercism\exercism.exe submit  kindergarten-garden/kindergarten_garden.py
 C:\Exercism\exercism.exe download --exercise=grade-school --track=python
+C:\Exercism\exercism.exe submit  grade-school/grade_school.py
+C:\Exercism\exercism.exe download --exercise=luhn --track=python
+C:\Exercism\exercism.exe submit  luhn/luhn.py
+C:\Exercism\exercism.exe download --exercise=clock --track=python
+C:\Exercism\exercism.exe submit  clock/clock.py
+C:\Exercism\exercism.exe download --exercise=markdown --track=python  
+C:\Exercism\exercism.exe submit  markdown/markdown.py
+C:\Exercism\exercism.exe download --exercise=tournament --track=python  
+C:\Exercism\exercism.exe submit  tournament/tournament.py
+C:\Exercism\exercism.exe download --exercise=book-store --track=python  
